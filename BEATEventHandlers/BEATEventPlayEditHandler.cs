@@ -33,6 +33,7 @@ namespace BEATLib.BEATEventHandlers
             FullList = new LinkedList<BEATEvent>(BEATFile.LoadBEATEvents(fileName));
             Start= ((LinkedList<BEATEvent>)FullList).First;
             End= ((LinkedList<BEATEvent>)FullList).Last;
+            previousEvent = ((LinkedList<BEATEvent>)FullList).First;
         }
 
         public override void SaveBeatFile(string fileName)
@@ -70,8 +71,11 @@ namespace BEATLib.BEATEventHandlers
                     inProgressList.AddLast(previousEvent.Value);
             }
 
-            for (LinkedListNode<BEATEvent> currentNode=inProgressList.First; currentNode!=null;currentNode=currentNode.Next)
+            //for (LinkedListNode<BEATEvent> currentNode=inProgressList.First; currentNode!=null;currentNode=currentNode.Next)
+            for (LinkedListNode<BEATEvent> currentNode = inProgressList.First; currentNode != null;)
             {
+                LinkedListNode<BEATEvent> nextNode = currentNode.Next;
+
                 //Checks if the event in progress is over
                 if (currentNode.Value.GetEndTime() <= time)
                 {
@@ -80,14 +84,20 @@ namespace BEATLib.BEATEventHandlers
                     currentNode.Value.RaiseEndEvent();
 
                     //Removes the current node then patches up the list
-                    LinkedListNode<BEATEvent> removeNode = currentNode;
-                    currentNode = currentNode.Previous;
-                    inProgressList.Remove(removeNode);
+                    //LinkedListNode<BEATEvent> removeNode = currentNode;
+                    //currentNode = currentNode.Previous;
+                    //inProgressList.Remove(removeNode);
+
+                    // Removes the current node from the list
+                    inProgressList.Remove(currentNode);
                 }
                 else
                 {
                     currentNode.Value.RaiseDuringEvent();
                 }
+
+                // Move to the next node
+                currentNode = nextNode;
             }
 
             //Check if the song has ended yet [this is the fist place where itl return false, doing it like this will let the in progress events resolve]
