@@ -7,7 +7,10 @@ using System.IO;
 
 namespace BEATLib
 {
-    public abstract class BEATEventHandlerBase: ICollection<BEATEvent>
+    /// <summary>
+    ///  Is the class incharge of handling BEATEvents. Allows for playback of the events using the UpdateTime() method.
+    /// </summary>
+    public abstract class BEATEventHandlerBase : ICollection<BEATEvent>
     {
         /// <summary>
         /// Is the collection that holds all of the BEATEvents.
@@ -96,6 +99,8 @@ namespace BEATLib
         {
             return ((IEnumerable)FullList).GetEnumerator();
         }
+
+        public abstract void Sort();
 
        
     }

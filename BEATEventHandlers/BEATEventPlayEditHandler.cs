@@ -26,13 +26,27 @@ namespace BEATLib.BEATEventHandlers
             Start = ((LinkedList<BEATEvent>)FullList).First;
             ((LinkedList<BEATEvent>)FullList).AddLast(BEATEvent.GetEndTemplate(0));
             End = ((LinkedList<BEATEvent>)FullList).Last;
+            
         }
 
         public override void LoadBEATFile(string fileName)
         {
+            //Load the File into FullList
             FullList = new LinkedList<BEATEvent>(BEATFile.LoadBEATEvents(fileName));
+
+            //Add the start and end events
             Start= ((LinkedList<BEATEvent>)FullList).First;
             End= ((LinkedList<BEATEvent>)FullList).Last;
+
+            //Set Previous event to the start event
+            previousEvent = ((LinkedList<BEATEvent>)FullList).First;
+        }
+
+        public void LoadBEATFile(Stream stream)
+        {
+            FullList = new LinkedList<BEATEvent>(BEATFile.LoadBEATEvents(stream));
+            Start = ((LinkedList<BEATEvent>)FullList).First;
+            End = ((LinkedList<BEATEvent>)FullList).Last;
             previousEvent = ((LinkedList<BEATEvent>)FullList).First;
         }
 
@@ -142,6 +156,25 @@ namespace BEATLib.BEATEventHandlers
                 return true;
             }
             return false;
+        }
+
+        /// <summary>
+        /// Sorts the collection of BEATEvents by time.
+        /// </summary>
+        public override void Sort()
+        {
+            // Convert LinkedList to List for easier sorting
+            List<BEATEvent> sortedList = new List<BEATEvent>(FullList);
+
+            // Sort the list using the default comparison (based on StartTime)
+            sortedList.Sort();
+
+            // Clear the original FullList and add the sorted items back
+            FullList.Clear();
+            foreach (var beatEvent in sortedList)
+            {
+                FullList.Add(beatEvent);
+            }
         }
     }
 }
